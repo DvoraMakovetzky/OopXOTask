@@ -1,0 +1,27 @@
+# Visual Studio files
+.vs/
+.vscode/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build files
+bin/
+obj/
+
+# Temporary files
+*.log
+*.tmp
+*.cache
+*.pdb
+*.ilk
+*.obj
+*.tlb
+*.tlh
+*.exe
+*.dll
+
+# Distribution folder
+dist/
+build/
