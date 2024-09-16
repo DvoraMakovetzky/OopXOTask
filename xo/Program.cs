@@ -4,8 +4,9 @@
     {
         static void Main(string[] args)
         {
-            maneger m = new maneger();
-            m.manager();
+            Maneger m = new Maneger();
+            //Play Game
+            m.ManageGame();
         }
     }
 }

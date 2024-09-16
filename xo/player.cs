@@ -6,11 +6,10 @@ using System.Threading.Tasks;
 
 namespace xo
 {
-    internal abstract class player
+    internal abstract class Player
     {
-        public char shape { get; set; }
-        public string name { get; set; }
-        public abstract int[] choose();
-
+        public char shape { get; set; }// The shape ('X' or 'O') of the player
+        public string name { get; set; }// The name of the player
+        public abstract int[] Choose();// Abstract method for choosing a move, to be implemented by derived classes
     }
 }

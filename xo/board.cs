@@ -6,92 +6,57 @@ using System.Threading.Tasks;
 
 namespace xo
 {
-    internal class board
+    internal class Board
     {
+        public static int size;// The size of the board
+        public static char[,] mat;// The game board, represented by a matrix
+        public Board(int size)
+        {
+            Board.size = size;
+            Board.mat = new char[size, size];
+        }
 
-        //public char[,] mat { get; set; }
-        public char[,] mat = new char[3, 3];
-
-        //הדפסת הלוח
+        //Printing the game board
         public void Print()
         {
-            for (int i = 0; i < this.mat.GetLength(0); i++)
+            for (int i = 0; i < size; i++)
             {
                 Console.WriteLine();
-                for (int j = 0; j < this.mat.GetLength(1); j++)
+                for (int j = 0; j < size; j++)
                 {
-                    Console.Write(this.mat[i, j] +"   |  ");
+                    Console.Write(mat[i, j]=='\0'?' ' : mat[i,j]);// Print the board cells
+                    if (j<size-1) Console.Write(" | ");
                 }
                 Console.WriteLine();
-                Console.WriteLine("----------------");
+                if(i<size-1) Console.Write(new string('-',size*4-3));// Print separators between rows
             }
         }
 
-        //בדיקה האם  המיקום ריק
-        public bool Isnull(int i, int j)
+        public bool IsNull(int i, int j)
         {
-            if (this.mat[i, j] != 'x'&& this.mat[i, j]!='o')
-                return true;
-            return false;
+            return i >= 0 && i < size && j >= 0 && j < size && mat[i, j] == '\0';// Check if the cell is within bounds and empty
         }
 
-        //הצבה
-        public void insert(int i, int j, char c)
+        public void Insert(int i, int j, char c)
         {
-            this.mat[i, j] = c;
+            mat[i, j] = c;// Place the player's shape in the specified cell
         }
 
-        //בדיקת מנצח
-        public bool Iswin(char c)
+        //Checking who wins the game
+        public static bool IsWin(char c)
         {
-            int c1 = 0;
-            int i = 0,j=0;
-            for ( i = 0; i < 3; i++)
+            for (int i = 0; i < size; i++)
             {
-                for ( j = 0; j < 3; j++)
-                {
-                    if (this.mat[i, j] ==(char)c)
-                        c1++;                    
-                }                                            
+                if (CheckRow(i, c) || CheckColumn(i, c)) return true;// Check if a row or column is filled with the same shape
             }
-            if (c1 < 3)
-                return false;
-            c1 = 0;
-            if (mat[1, 1] == c)
-            { 
-               if ((mat[1, 1] == mat[0, 0] && mat[1, 1] == mat[2, 2])|| (mat[1, 1] == mat[0, 2] && mat[1, 1] == mat[2, 0]))
-                return true;
-            }
-            c1 = 0;
-             i = 0;
-            while (c1 < 3&&i<3)
-            {
-                c1 = 0;
-                for ( j = 0; j < 3; j++)
-                    {
-                        if (this.mat[i, j] == c)
-                            c1++;
-                    }
-                 i++;
-            }
-            if (c1 == 3)
-                return true;
-            c1 = 0;
-            i = 0;
-            j = 0;
-            while (c1 < 3 && j < 3)
-            {
-                c1 = 0;
-                for ( i = 0; i< 3; i++)
-                {
-                    if (this.mat[i, j] == c)
-                        c1++;
-                }
-                j++;
-            }
-            if (c1 == 3)
-                return true;
-            return false;
+            return CheckDiagonal(c) || CheckAntiDiagonal(c);// Check the diagonals
         }
+        public static bool IsFull() => !mat.Cast<char>().Contains('\0'); // Check if the board is full
+
+        private static bool CheckRow(int row, char c) => Enumerable.Range(0, size).All(col => mat[row, col] == c);// Check if a row is filled with the same shape
+        private static bool CheckColumn(int col, char c) => Enumerable.Range(0, size).All(row => mat[row, col] == c);// Check if a column is filled with the same shape
+        private static bool CheckDiagonal(char c) => Enumerable.Range(0, size).All(i => mat[i, i] == c);// Check if the main diagonal is filled with the same shape
+        private static bool CheckAntiDiagonal(char c) => Enumerable.Range(0, size).All(i => mat[i, size - i - 1] == c);// Check if the anti-diagonal is filled with the same shape
+
     }
 }

@@ -6,74 +6,64 @@ using System.Threading.Tasks;
 
 namespace xo
 {
-    internal class maneger
+    internal class Maneger
     {
-        public board board { get; set; }
-        public player[] players { get; set; }
-        public void choose()
+        public Board board { get; set; }// The game board
+        public Player[] players { get; set; }// Array of players
+
+        public void StartGame()
         {
-            this.board = new board();
-            this.players = new player[2];
-            Console.WriteLine("insert your name");
-            this.players[0] = new person(Console.ReadLine());
-            Console.WriteLine("to play whith computers : press 1\n to play whith friends : press 2");
-            int c = int.Parse(Console.ReadLine());
-            switch (c)
+            Console.WriteLine("Enter the size of the board:");
+            int size = int.Parse(Console.ReadLine());// Get the size of the board from the user
+            this.board = new Board(size);// Initialize the board
+
+            this.players = new Player[2];
+            Console.WriteLine("Insert your name");
+            this.players[0] = new Person(Console.ReadLine());// Initialize the first player
+
+            Console.WriteLine("To play with computers press 1, to play with friend press 2:");
+            int option = int.Parse(Console.ReadLine());
+            if (option == 1)
             {
-                case 1:
-                    this.players[1] = new computer();
-                    players[0].shape = 'o';
-                    players[1].shape = 'x';
-                    break;
-                case 2:
-                    
-                    Console.WriteLine("insert yours frind name");
-                    this.players[1] = new person(Console.ReadLine());
-                    players[0].shape = 'o';
-                    players[1].shape = 'x';
-                    break;
-                default:
-                    Console.WriteLine("error");
-                    break;
-            }
-        }
-        public void manager()
-        {
-            choose();
-           
-            for (int i = 0; i < 9 && !(this.board.Iswin((char)players[0].shape)) && !(this.board.Iswin((char)players[1].shape)); i++)
-            {
-                this.board.Print();
-                int[] loc = players[i % 2].choose();
-                while (!(board.Isnull(loc[0], loc[1])))
-                {
-                    if (players[i % 2] is person)
-                    {
-                        Console.WriteLine("the location is full");
-                    }
-                    loc = players[i % 2].choose();
-                }
-                board.insert(loc[0], loc[1], players[i % 2].shape);
-            }
-            if (board.Iswin(players[0].shape))
-            {
-                this.board.Print();
-                Console.WriteLine("congratulations " + players[0].name + "!!  you win!!!");
+                players[1] = new Computer('x', 'o');// Initialize the computer player
             }
             else
             {
-                this.board.Print();
-                if (board.Iswin(players[1].shape))
-                {
-                    Console.WriteLine("congratulations " + players[1].name + "!!  you win!!!");
-                }
-                else
-                    Console.WriteLine("oops..... ");
+                Console.WriteLine("Insert your friend's name:");
+                players[1] = new Person(Console.ReadLine());// Initialize the person player
             }
-
-
+            // Set player shapes based on their roles
+            players[0].shape = 'o';
+            players[1].shape = 'x';
         }
-
-
+        public void ManageGame()
+        {
+            StartGame();// Start and initialize the game
+            int turn = 0;// Variable to track the turn (used to alternate between players)
+            // Continue the game until there's a winner or the board is full (a draw)
+            while (!Board.IsFull() && !Board.IsWin(players[0].shape) && !Board.IsWin(players[1].shape))
+            {
+                board.Print();// Print the current state of the board
+                int[] move = players[turn % 2].Choose();// Get the current player's move
+                // Validate the move: ensure the selected cell is empty
+                while (!board.IsNull(move[0], move[1]))
+                {
+                    Console.WriteLine("Invalid move, try again.");
+                    move = players[turn % 2].Choose();// Prompt the player to choose again if invalid
+                }
+                // Insert the current player's shape in the chosen cell
+                board.Insert(move[0], move[1], players[turn % 2].shape);
+                turn++;// Switch to the other player's turn
+            }
+            // After the game ends (win or draw), print the final board
+            board.Print();
+            // Check for a winner or declare a draw
+            if (Board.IsWin(players[0].shape))
+                Console.WriteLine($"{players[0].name} wins!");
+            else if (Board.IsWin(players[1].shape))
+                Console.WriteLine($"{players[1].name} wins!");
+            else
+                Console.WriteLine("It's a draw!");
+        }
     }
 }
